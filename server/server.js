@@ -9,6 +9,9 @@ const grid = require('gridfs-stream')
 const methodOverride = require('method-override')
 const cookieParser = require("cookie-parser")
 
+const connection = require('./Controllers/db')
+const startupAuth = require('./Routes/startupAuth.routes')
+const evaluatorAuth = require('./Routes/evaluatorAuth.routes')
 
 const app = express()
 app.use(express.json())
@@ -21,11 +24,13 @@ app.use(cors({
 );
 app.use(cookieParser(process.env.ACCESS_TOKEN_SECRET))
 
-// connection();
+connection();
 
 app.get("/", (req, res) => {
   res.send("Home");
 });
 
+app.use('/startup', startupAuth)
+app.use('/evaluator', evaluatorAuth)
 
 app.listen(8000, () => console.log("Server on 8000"))

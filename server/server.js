@@ -21,7 +21,7 @@ app.use(cors({
 );
 app.use(cookieParser(process.env.ACCESS_TOKEN_SECRET))
 
-connection();
+// connection();
 
 app.get("/", (req, res) => {
   res.send("Home");

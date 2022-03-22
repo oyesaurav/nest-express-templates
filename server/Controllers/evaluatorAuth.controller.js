@@ -18,12 +18,13 @@ const evaluatorRegister = (req, res, next) => {
               error: err,
             })
           } else {
-            const evaluator = new evaluator({
+            const newevaluator = new evaluator({
               _id: new mongoose.Types.ObjectId(),
               email: req.body.email,
               password: hash,
               name: req.body.name,
               phone_number: req.body.phone_number,
+              following : 0
             })
             evaluator
               .save()
@@ -84,19 +85,39 @@ const evaluatorLogin = (req, res, next) => {
           })
         }
         if (result) {
-          const token = jwt.sign(
+          const accessToken = jwt.sign(
             {
               evaluatorId: evaluator[0]._id,
               email: evaluator[0].email,
               name: evaluator[0].name,
               phone_number: evaluator[0].phone_number,
             },
-            process.env.jwtSecret,
+            process.env.ACCESS_TOKEN_SECRET,
             {
               expiresIn: "1d",
             }
           )
+          const refreshToken = jwt.sign(
+            {
+              evaluatorId: evaluator[0]._id,
+              email: evaluator[0].email,
+              name: evaluator[0].name,
+              phone_number: evaluator[0].phone_number,
+            },
+            process.env.REFRESH_TOKEN_SECRET
+          )
           console.log(evaluator[0])
+          res.cookie("AT", accessToken, {
+            maxAge: 900000,
+            httpOnly: true,
+            secure: false,
+            signed: true,
+          })
+          res.cookie("RT", refreshToken, {
+            httpOnly: true,
+            secure: false,
+            signed: true,
+          })
           return res.status(200).json({
             message: "Auth successful",
             evaluatorDetails: {
@@ -105,7 +126,7 @@ const evaluatorLogin = (req, res, next) => {
               email: evaluator[0].email,
               phone_number: evaluator[0].phone_number,
             },
-            token: token,
+            token: accessToken,
           })
         }
         res.status(401).json({

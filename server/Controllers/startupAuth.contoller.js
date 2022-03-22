@@ -84,19 +84,39 @@ const startupLogin = (req, res, next) => {
           })
         }
         if (result) {
-          const token = jwt.sign(
+          const accessToken = jwt.sign(
             {
               startupId: startup[0]._id,
               email: startup[0].email,
               name: startup[0].name,
               phone_number: startup[0].phone_number,
             },
-            process.env.jwtSecret,
+            process.env.ACCESS_TOKEN_SECRET,
             {
               expiresIn: "1d",
             }
           )
+          const refreshToken = jwt.sign(
+            {
+              startupId: startup[0]._id,
+              email: startup[0].email,
+              name: startup[0].name,
+              phone_number: startup[0].phone_number,
+            },
+            process.env.REFRESH_TOKEN_SECRET
+            )
           console.log(startup[0])
+          res.cookie("AT", accessToken, {
+            maxAge: 900000,
+            httpOnly: true,
+            secure: false,
+            signed: true,
+          })
+          res.cookie("RT", refreshToken, {
+            httpOnly: true,
+            secure: false,
+            signed: true,
+          })
           return res.status(200).json({
             message: "Auth successful",
             startupDetails: {
@@ -105,7 +125,7 @@ const startupLogin = (req, res, next) => {
               email: startup[0].email,
               phone_number: startup[0].phone_number,
             },
-            token: token,
+            token: accessToken,
           })
         }
         res.status(401).json({

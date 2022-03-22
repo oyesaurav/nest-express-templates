@@ -10,7 +10,7 @@ const methodOverride = require('method-override')
 const cookieParser = require("cookie-parser")
 
 const connection = require('./Controllers/db')
-const startupAuth = require('./Routes/startupAuth.routes')
+const startup = require('./Routes/startup.routes')
 const evaluatorAuth = require('./Routes/evaluatorAuth.routes')
 
 const app = express()
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
   res.send("Home");
 });
 
-app.use('/startup', startupAuth)
+app.use('/startup', startup)
 app.use('/evaluator', evaluatorAuth)
 
 app.listen(8000, () => console.log("Server on 8000"))

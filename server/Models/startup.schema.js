@@ -2,9 +2,12 @@ const mongoose = require("mongoose");
 // const passportLocalMongoose = require('passport-local-mongoose')
 
 const startup = new mongoose.Schema({
-    cName: String,
-    cHeadline: String,
-    clocation: String,
+    Name: String,
+    email: String,
+    password: String,
+    phone_number: String,
+    Headline: String,
+    location: String,
     evaluators: Number,
     followers: Number,
     valuation: Number,
@@ -25,8 +28,7 @@ const startup = new mongoose.Schema({
         shortdescription: String,
         subheading: String,
         body: String,
-        problemUrl: URL,
-    },
+        problemUrl: URL,    },
     solution: {
         heading: String,
         shortdescription: String,

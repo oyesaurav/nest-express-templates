@@ -13,7 +13,7 @@ module.exports = function authToken(req, res, next) {
             jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
                 if (error) return res.status(403).json({ err: error })
                 const newAccessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-                    expiresIn: "15sec",
+                    expiresIn: "1d",
                 })
                 res.cookie("AT", newAccessToken, {
                     maxAge: 900000,

@@ -1,13 +1,13 @@
 const bcrypt = require("bcrypt")
 require("dotenv").config()
 const jwt = require("jsonwebtoken")
-const startup = require('../Models/startup.schema')
+const startupdb = require('../Models/startup.schema')
 
 const startupRegister = (req, res, next) => {
-  startup.find({ email: req.body.email })
+  startupdb.findOne({ email: req.body.email })
     .exec()
     .then((startup) => {
-      if (startup.length >= 1) {
+      if (!startup) {
         res.status(409).json({
           message: "Email Exists",
         })
@@ -18,35 +18,25 @@ const startupRegister = (req, res, next) => {
               error: err,
             })
           } else {
-            const startup = new startup({
+            const newstartup = new startup({
               _id: new mongoose.Types.ObjectId(),
               email: req.body.email,
               password: hash,
-              name: req.body.name,
+              Name: req.body.name,
               phone_number: req.body.phone_number,
             })
-            startup
+            newstartup
               .save()
               .then(async (result) => {
-                await result
-                  .save()
-                  .then((result1) => {
-                    console.log(`startup created ${result}`)
-                    res.status(201).json({
-                      startupDetails: {
-                        startupId: result._id,
-                        email: result.email,
-                        name: result.name,
-                        phone_number: result.phone_number,
-                      },
-                    })
-                  })
-                  .catch((err) => {
-                    console.log(err)
-                    res.status(400).json({
-                      message: err.toString(),
-                    })
-                  })
+                console.log(`startup created ${result}`)
+                res.status(201).json({
+                  startupDetails: {
+                    startupId: result._id,
+                    email: result.email,
+                    Name: result.Name,
+                    phone_number: result.phone_number,
+                  },
+                })
               })
               .catch((err) => {
                 console.log(err)
@@ -66,17 +56,16 @@ const startupRegister = (req, res, next) => {
     })
 }
 
-const startupLogin = (req, res, next) => {
-  startup.find({ email: req.body.email })
+const startupLogin = async (req, res, next) => {
+  await startupdb.findOne({ email: req.body.email })
     .exec()
     .then((startup) => {
-      console.log(startup)
-      if (startup.length < 1) {
+      if (!startup) {
         return res.status(401).json({
           message: "Auth failed: Email not found probably",
         })
       }
-      bcrypt.compare(req.body.password, startup[0].password, (err, result) => {
+      bcrypt.compare(req.body.password, startup.password, (err, result) => {
         if (err) {
           console.log(err)
           return res.status(401).json({
@@ -86,10 +75,10 @@ const startupLogin = (req, res, next) => {
         if (result) {
           const accessToken = jwt.sign(
             {
-              startupId: startup[0]._id,
-              email: startup[0].email,
-              name: startup[0].name,
-              phone_number: startup[0].phone_number,
+              startupId: startup._id,
+              email: startup.email,
+              name: startup.name,
+              phone_number: startup.phone_number,
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
@@ -98,14 +87,14 @@ const startupLogin = (req, res, next) => {
           )
           const refreshToken = jwt.sign(
             {
-              startupId: startup[0]._id,
-              email: startup[0].email,
-              name: startup[0].name,
-              phone_number: startup[0].phone_number,
+              startupId: startup._id,
+              email: startup.email,
+              name: startup.name,
+              phone_number: startup.phone_number,
             },
             process.env.REFRESH_TOKEN_SECRET
             )
-          console.log(startup[0])
+          console.log(startup)
           res.cookie("AT", accessToken, {
             maxAge: 900000,
             httpOnly: true,
@@ -120,10 +109,10 @@ const startupLogin = (req, res, next) => {
           return res.status(200).json({
             message: "Auth successful",
             startupDetails: {
-              startupId: startup[0]._id,
-              name: startup[0].name,
-              email: startup[0].email,
-              phone_number: startup[0].phone_number,
+              startupId: startup._id,
+              name: startup.name,
+              email: startup.email,
+              phone_number: startup.phone_number,
             },
             token: accessToken,
           })

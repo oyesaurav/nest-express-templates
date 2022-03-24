@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.post('/register', startupAuth.startupRegister);
 router.post('/login', startupAuth.startupLogin);
-router.post('/edit', startupEdit)
+router.post('/edit', startupEdit.startupEdit);
+router.post('/')
 
 
 module.exports = router

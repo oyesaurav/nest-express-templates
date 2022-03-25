@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser")
 const connection = require('./Controllers/db')
 const startup = require('./Routes/startup.routes')
 const evaluatorAuth = require('./Routes/evaluatorAuth.routes')
+const fileUpload = require('./Routes/fileUpload.routes')
 
 const app = express()
 app.use(express.json())
@@ -32,5 +33,6 @@ app.get("/", (req, res) => {
 
 app.use('/startup', startup)
 app.use('/evaluator', evaluatorAuth)
+app.use('/file', fileUpload)
 
 app.listen(8000, () => console.log("Server on 8000"))

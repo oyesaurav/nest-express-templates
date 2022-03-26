@@ -12,7 +12,7 @@ const startupEdit = async (req, res, next) => {
           message: "Startup not registered",
         })
       } else {
-        await startupdb.updateOne({ _id: req.body._id }, {
+        startupdb.updateOne({ _id: req.body._id }, {
           $set: {
             Name: req.body.name || startup.Name,
             phone_number: req.body.phone_number || startup.phone_number,
@@ -77,6 +77,84 @@ const startupEdit = async (req, res, next) => {
     })
 }
 
+const addTeam = async (req, res, next) => {
+  await startupdb.findOne({ _id: req.body.id })
+    .exec()
+    .then((startup) => {
+      if (!startup) {
+        res.status(409).json({
+          message: "Startup not registered",
+        })
+      } else {
+        const members = []
+        req.body.team.forEach((element) => {
+          members.push({
+            name: element.name,
+            designation: element.designation,
+            photourl: element.photourl
+          })
+        })
+        startupdb.updateOne({ _id: startup._id }, {
+          $push: {
+            team: {
+              $each : members
+            }
+          }
+        })
+        .exec()
+        .then(result => {
+          return res.status(200).json({message : "Team updated"})
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(500).json({
+            message: err.toString(),
+          })
+        })
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).json({
+        message: err.toString(),
+      })
+    })
+}
+
+const delTeam = async (req, res, next) => {
+  await startupdb.findOne({ _id: req.body.id })
+    .exec()
+    .then((startup) => {
+      if (!startup) {
+        res.status(409).json({
+          message: "Startup not registered",
+        })
+      } else {
+        startupdb.updateOne({ _id: startup._id }, {
+          $pull: {
+            team: { _id: req.body.memberid}
+          }
+        })
+        .exec()
+        .then(result => {
+          return res.status(200).json({message : "Team updated"})
+        })
+        .catch((err) => {
+          console.log(err)
+          res.status(500).json({
+            message: err.toString(),
+          })
+        })
+      }
+    })
+    .catch((err) => {
+      console.log(err)
+      res.status(500).json({
+        message: err.toString(),
+      })
+    })
+}
+
 const addPinnedUpdates = async (req, res, next) => {
   await startupdb.findOne({ email: req.body.email })
     .exec()
@@ -86,7 +164,7 @@ const addPinnedUpdates = async (req, res, next) => {
           message: "Startup not registered",
         })
       } else {
-        await startupdb.updateOne({ _id: startup._id }, {
+        startupdb.updateOne({ _id: startup._id }, {
           $push: {
             pinnedUpdates : {updateId : req.body.updateId} 
           }
@@ -120,7 +198,7 @@ const delPinnedUpdates = async (req, res, next) => {
           message: "Startup not registered",
         })
       } else {
-        await startupdb.updateOne({ _id: startup._id }, {
+        startupdb.updateOne({ _id: startup._id }, {
           $pull: {
             pinnedUpdates : {updateId : req.body.updateId} 
           }
@@ -149,5 +227,6 @@ module.exports = {
   startupEdit,
   addPinnedUpdates,
   delPinnedUpdates,
-  
+  addTeam,
+  delTeam,
 }

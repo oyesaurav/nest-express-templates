@@ -24,6 +24,48 @@ const startupRegister = (req, res, next) => {
               password: hash,
               Name: req.body.name,
               phone_number: req.body.phone_number,
+              Headline: req.body.Headline || NULL,
+              location: req.body.location || NULL,
+              overview: {
+                website: req.body.website || NULL,
+                ceo: req.body.ceo || NULL,
+                employees: req.body.employees || NULL,
+                sector: req.body.sector || NULL,
+                stage: req.body.stage || NULL,
+                founded: req.body.founded || null,
+                location: req.body.location || null
+              },
+              pinnedUpdates : null,
+              problem: {
+                heading: req.body.pheading || null,
+                shortdescription: req.body.pshortdescription || null,
+                subheading: req.body.psubheading || null,
+                body: req.body.pbody || null,
+                problemUrl: req.body.problemUrl || null,
+              },
+              solution: {
+                heading: req.body.sheading || null,
+                shortdescription: req.body.sshortdescription || null,
+                subheading: req.body.ssubheading || null,
+                body: req.body.sbody || null,
+                solutionUrl: req.body.solutionUrl || null,
+              },
+              futurePlans: {
+                heading: req.body.fheading || null,
+                shortdescription: req.body.fshortdescription || null,
+                subheading: req.body.fsubheading || null,
+                body: req.body.fbody || null,
+                plansUrl: req.body.plansUrl || null,
+              },
+              storybehind: {
+                heading: req.body.sbheading || null,
+                shortdescription: req.body.sbshortdescription || null,
+                subheading: req.body.sbsubheading || null,
+                body: req.body.sbbody || null,
+                storyUrl: req.body.storyUrl || null,
+              },
+              team: null,
+              highlights: null
             })
             newstartup
               .save()

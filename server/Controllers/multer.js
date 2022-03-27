@@ -30,31 +30,5 @@ const storage = new GridFsStorage({
   },
 });
 
-const fileViewer = async (req, res) => {
-  try {
-      const file = await gfs.files.findOne({ filename: req.params.filename })
-      const readStream = gridfsBucket.openDownloadStreamByName(file.filename)
-      readStream.pipe(res)
-  }
-  catch (err) {
-      console.log(err)
-      res.send("file not found")
-  }
-}
 
-const fileUploader =  async (req, res) => {
-  if (req.file === undefined) res.send("choose file first");
-  else {
-    const file1 = `http://localhost:8000/file/${req.file.filename}`;
-
-    return res.json({
-      url: file1,
-    });
-  }
-}
-
-
-module.exports = {
-  fileViewer,
-  fileUploader
-}
+module.exports = multer({ storage });

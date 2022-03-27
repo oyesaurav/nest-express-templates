@@ -11,8 +11,15 @@ module.exports = function authToken(req, res, next) {
     jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
         if (err) {
             jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
-                if (error) return res.status(403).json({ err: error })
-                const newAccessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                if (error) return res.status(400).send("Auth failed")
+                const newAccessToken = jwt.sign(
+                    {
+                        startupId: user._id,
+                        email: user.email,
+                        name: user.name,
+                        phone_number: user.phone_number,
+                    },
+                    process.env.ACCESS_TOKEN_SECRET, {
                     expiresIn: "1d",
                 })
                 res.cookie("AT", newAccessToken, {
@@ -20,13 +27,21 @@ module.exports = function authToken(req, res, next) {
                     httpOnly: true,
                     secure: false,
                     signed: true,
-                })
-                req.user = user
+                  })
+                req.user = {
+                    data: user,
+                    token: true
+                }
                 next()
             })
         }
-        req.user = user;
-        next()
+        else {
+            req.user = {
+                data: user,
+                token: false
+            };
+            next()
+        }
     })
 }
 

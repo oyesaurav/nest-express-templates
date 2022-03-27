@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt")
+const mongoose = require('mongoose')
 require("dotenv").config()
 const jwt = require("jsonwebtoken")
 const startupdb = require('../Models/startup.schema')
@@ -7,7 +8,7 @@ const startupRegister = (req, res, next) => {
   startupdb.findOne({ email: req.body.email })
     .exec()
     .then((startup) => {
-      if (!startup) {
+      if (startup) {
         res.status(409).json({
           message: "Email Exists",
         })
@@ -18,24 +19,24 @@ const startupRegister = (req, res, next) => {
               error: err,
             })
           } else {
-            const newstartup = new startup({
+            const newstartup = new startupdb({
               _id: new mongoose.Types.ObjectId(),
               email: req.body.email,
               password: hash,
-              Name: req.body.name,
+              name: req.body.name,
               phone_number: req.body.phone_number,
-              Headline: req.body.Headline || NULL,
-              location: req.body.location || NULL,
+              Headline: req.body.Headline || null,
+              location: req.body.location || null,
               overview: {
-                website: req.body.website || NULL,
-                ceo: req.body.ceo || NULL,
-                employees: req.body.employees || NULL,
-                sector: req.body.sector || NULL,
-                stage: req.body.stage || NULL,
+                website: req.body.website || null,
+                ceo: req.body.ceo || null,
+                employees: req.body.employees || null,
+                sector: req.body.sector || null,
+                stage: req.body.stage || null,
                 founded: req.body.founded || null,
                 location: req.body.location || null
               },
-              pinnedUpdates : null,
+              pinnedUpdates : [],
               problem: {
                 heading: req.body.pheading || null,
                 shortdescription: req.body.pshortdescription || null,
@@ -64,8 +65,8 @@ const startupRegister = (req, res, next) => {
                 body: req.body.sbbody || null,
                 storyUrl: req.body.storyUrl || null,
               },
-              team: null,
-              highlights: null
+              team: [],
+              highlights: []
             })
             newstartup
               .save()
@@ -75,7 +76,7 @@ const startupRegister = (req, res, next) => {
                   startupDetails: {
                     startupId: result._id,
                     email: result.email,
-                    Name: result.Name,
+                    name: result.name,
                     phone_number: result.phone_number,
                   },
                 })

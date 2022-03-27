@@ -1,6 +1,8 @@
 const express = require('express');
+const jwtMiddleware = require('../Middleware/auth.middleware')
 const startupAuth = require('../Controllers/startupAuth.contoller')
 const startupEdit = require('../Controllers/startupEdit.controller')
+const startupGet = require('../Controllers/startupGet.controller')
 
 const router = express.Router();
 
@@ -15,7 +17,7 @@ router.post('/delteam', startupEdit.delTeam);
 // delhighlight
 // edithighlight
 
-// getdetails
+router.get('/get', jwtMiddleware, startupGet.getStartupDetails);
 
 
 module.exports = router

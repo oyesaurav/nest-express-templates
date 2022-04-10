@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken")
 const startupdb = require('../Models/startup.schema')
 
 const getStartupDetails = async (req, res, next) => {
-    await startupdb.findOne({ _id : req.user.data.startupId})
+    await startupdb.findOne({ _id : req.user.startupId})
       .exec()
       .then((startup) => {
         if (!startup) {

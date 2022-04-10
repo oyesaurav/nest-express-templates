@@ -14,7 +14,7 @@ const startupEdit = async (req, res, next) => {
       } else {
         startupdb.updateOne({ _id: req.body._id }, {
           $set: {
-            Name: req.body.name || startup.Name,
+            name: req.body.name || startup.name,
             phone_number: req.body.phone_number || startup.phone_number,
             Headline: req.body.Headline || startup.Headline,
             location: req.body.location || startup.location,

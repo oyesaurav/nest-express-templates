@@ -8,7 +8,7 @@ const updates = new mongoose.Schema({
     articles: [{
         heading: String,
         body: String,
-        photourl: URL,
+        photourl: String,
         date: Date,
         likes: Number,
         bookmarks: Number,

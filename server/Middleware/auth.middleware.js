@@ -28,18 +28,12 @@ module.exports = function authToken(req, res, next) {
                     secure: false,
                     signed: true,
                   })
-                req.user = {
-                    data: user,
-                    token: true
-                }
+                req.user = user
                 next()
             })
         }
         else {
-            req.user = {
-                data: user,
-                token: false
-            };
+            req.user = user
             next()
         }
     })

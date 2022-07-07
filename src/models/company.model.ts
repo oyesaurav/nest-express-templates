@@ -15,7 +15,7 @@ export class company {
     cphone: Number;
 
     @Prop()
-    Address: String;
+    address: String;
 
     @Prop()
     logo_url: String;

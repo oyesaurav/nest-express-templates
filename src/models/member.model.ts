@@ -7,8 +7,11 @@ export class member {
     @Prop({ required: true })
     email: String;
 
-    @Prop({ required: true })
+    @Prop()
     password: String;
+    
+    @Prop()
+    name: String;
 
     @Prop({ required: true })
     company_id: String;

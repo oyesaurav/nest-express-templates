@@ -12,7 +12,7 @@ export class company {
     cemail: String;
 
     @Prop({ required: true })
-    cphone: Number;
+    cphone: String;
 
     @Prop()
     address: String;

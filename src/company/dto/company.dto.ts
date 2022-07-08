@@ -10,11 +10,10 @@ export class companyDto {
 
     @IsMobilePhone()
     @IsNotEmpty()
-    cphone: Number;
+    cphone: String;
 
     address: String;
     logo_url: String;
-    domain: String;
 
     @IsNotEmpty()
     members: [{
@@ -29,6 +28,7 @@ export class memberDto {
     @IsNotEmpty()
     email: String;
 
+    name: String;
     password: String;
     company_id: String;
 }

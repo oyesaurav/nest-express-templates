@@ -19,3 +19,39 @@ export class resetPassDto {
 
     company_id: String;
 }
+
+export class loginDto {
+    @IsEmail()
+    @IsNotEmpty()
+    email: String;
+
+    @IsNotEmpty()
+    password: String;
+}
+
+export class newBlpanDto {
+    @IsNotEmpty()
+    t_id: String;
+}
+
+export class updateBplanDto {
+    @IsNotEmpty()
+    bplan_id: String;
+
+    @IsNotEmpty()
+    section_id: String;
+
+    content: [{
+        heading: String,
+        body : String
+    }]
+}
+export class getBplanDto {
+    @IsNotEmpty()
+    bplan_id: String;
+
+    content: [{
+        heading: String,
+        body : String
+    }]
+}

@@ -20,7 +20,7 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
             },
             process.env.ACCESS_TOKEN_SECRET,
             {
-              expiresIn: '15min',
+              expiresIn: '1d',
             },
           );
           res.cookie('AT', newAccessToken);

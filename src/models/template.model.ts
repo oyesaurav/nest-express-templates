@@ -9,10 +9,8 @@ export class template {
 
     @Prop()
     content: [{
-            section: [{   // array of the different sections
-            heading: String; // heading of each section
-            body: String; // body in html including all sub heads, images and formatted text.
-        }] 
+        heading: String,
+        body : String
     }]
 }
 

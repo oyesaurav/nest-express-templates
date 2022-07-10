@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Param, Post, Request, Res, UseGuards } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
 import { Response } from 'express';
+import * as mongoose from 'mongoose';
 import { JwtAuthGuard } from 'src/utils/guards/jwt.guard';
 import { BplanService } from './bplan.service';
 import { getBplanDto, loginDto, memberDto, newBlpanDto, resetPassDto, updateBplanDto } from './dto';
 import { MemberService } from './member.service';
-
+const grid = require('gridfs-stream')
 @Controller('member')
 export class MemberController {
     constructor(private memberService: MemberService) { }
@@ -71,5 +73,44 @@ export class BplanController {
     @Post('')
     updateBplan(@Request() req, @Res() res: Response, @Body() dto : updateBplanDto) {
         return this.bplanService.updateBplan(dto,req.user,res)
+    }
+}
+
+@Controller('file')
+export class fileController{
+    private gfs: any
+    private gridfsBucket: any
+    constructor(@InjectConnection() private readonly connection: mongoose.Connection) { 
+        this.gridfsBucket = new mongoose.mongo.GridFSBucket(this.connection.db, {
+            bucketName: 'photos'
+        })
+     }
+
+    @Post('upload')
+    uploadFile(@Request() req, @Res() res: Response) {
+        if (req.file === undefined) res.status(404).json({message: "No file choosen"})
+        else {
+            const file = `http://localhost:4000/file/${req.file.filename}`;
+            return res.json({
+                message: "File uploaded successfully",
+                url: file,
+            });
+        }
+    }
+
+    @Get(':filename')
+    async viewFile(@Param() param, @Res() res: Response) {
+        
+        // this.gfs = grid(mongoose.connection.db, mongoose.mongo)
+        // this.gfs.collection('photos')
+        try {
+            // const file = await this.gfs.files.findOne({ filename: param.filename })
+            const readStream = this.gridfsBucket.openDownloadStreamByName(param.filename)
+            return readStream.pipe(res)
+        }
+        catch (err) {
+            console.log(err)
+            res.status(500).json({message:err})
+        }
     }
 }

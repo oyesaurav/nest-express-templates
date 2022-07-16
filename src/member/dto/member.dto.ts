@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty } from "class-validator";
-
+import * as mongoose from 'mongoose'
 export class memberDto {
     @IsEmail()
     @IsNotEmpty()
@@ -41,7 +41,15 @@ export class updateBplanDto {
     @IsNotEmpty()
     section_id: String;
 
+    heading: String;
+    body : String
+}
+export class changeBplanDto {
+    @IsNotEmpty()
+    bplan_id: String;
+
     content: [{
+        _id: String,
         heading: String,
         body : String
     }]
@@ -49,7 +57,12 @@ export class updateBplanDto {
 export class getBplanDto {
     @IsNotEmpty()
     bplan_id: String;
+}
 
+export class newTempDTo {
+    @IsNotEmpty()
+    template_code: String;
+    
     content: [{
         heading: String,
         body : String

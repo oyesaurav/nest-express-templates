@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { company, CompanyDoc } from 'src/models/company.model';
 import { member, memberDoc } from 'src/models/member.model';
-import {getBplanDto, loginDto, memberDto, newBlpanDto, resetPassDto, updateBplanDto } from './dto';
+import {changeBplanDto, getBplanDto, loginDto, memberDto, newBlpanDto, newTempDTo, resetPassDto, updateBplanDto } from './dto';
 import { template, templateDoc } from 'src/models/template.model';
 import { bplan, bplanDoc } from 'src/models/bplan.model';
 
@@ -71,7 +71,7 @@ export class BplanService {
     
     async updateBplan(dto: updateBplanDto, user, res) {
         await this.bplanModel.updateOne({ _id: dto.bplan_id, "content._id": dto.section_id},
-            {$set : {"content.$" : dto.content}}
+            {$set : {"content.$" : {heading: dto.heading, body: dto.body}}}
         )
         .then(async (bplan) => {
             res.status(200).json({
@@ -79,6 +79,40 @@ export class BplanService {
             })
         })
         .catch(err => {
+            res.status(500).json({
+              message: err,
+            });
+        })
+    }
+
+    async changeBplan(dto: changeBplanDto, user, res) {
+        await this.bplanModel.updateOne({ _id: dto.bplan_id},
+            {$set : {content : dto.content}}
+        )
+        .then(async (bplan) => {
+            res.status(200).json({
+                message: "The Bplan order has been updated"
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+              message: err,
+            });
+        })
+    }
+
+    async newtemplate(dto: newTempDTo, res) {
+        const newtemplate = new this.templateModel({
+            ...dto
+        })
+        newtemplate.save()
+            .then(async (temp) => {
+            res.status(200).json({
+                message: "template created",
+                ...temp.content
+            })
+        })
+            .catch(err => {
             res.status(500).json({
               message: err,
             });

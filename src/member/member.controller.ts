@@ -4,7 +4,7 @@ import { Response } from 'express';
 import * as mongoose from 'mongoose';
 import { JwtAuthGuard } from 'src/utils/guards/jwt.guard';
 import { BplanService } from './bplan.service';
-import { changeBplanDto, getBplanDto, loginDto, memberDto, newBlpanDto, newTempDTo, resetPassDto, updateBplanDto } from './dto';
+import { addSectionDto, changeBplanDto, getBplanDto, loginDto, memberDto, newBlpanDto, newTempDTo, resetPassDto, updateBplanDto } from './dto';
 import { MemberService } from './member.service';
 const grid = require('gridfs-stream')
 @Controller('member')
@@ -73,6 +73,12 @@ export class BplanController {
     @Post('')
     updateBplan(@Request() req, @Res() res: Response, @Body() dto : updateBplanDto) {
         return this.bplanService.updateBplan(dto,req.user,res)
+    }
+    
+    @UseGuards(JwtAuthGuard)
+    @Post('/temp/addsec')
+    addSection(@Request() req, @Res() res: Response, @Body() dto : addSectionDto) {
+        return this.bplanService.addsectionBplan(dto, req.user, res)
     }
 
     @UseGuards(JwtAuthGuard)

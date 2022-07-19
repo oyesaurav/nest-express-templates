@@ -8,8 +8,8 @@ export class content{
     @Prop()
     heading: String;
 
-    @Prop()
-    body : String
+    @Prop({type: {}})
+    body: {}
 }
 
 export const contentModel = SchemaFactory.createForClass(content)

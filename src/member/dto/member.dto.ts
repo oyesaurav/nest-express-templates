@@ -42,16 +42,25 @@ export class updateBplanDto {
     section_id: String;
 
     heading: String;
-    body : String
+    body : Object
+}
+
+export class addSectionDto {
+    @IsNotEmpty()
+    t_id: String;
+
+    content: {
+        heading: String,
+        body: Object
+    }
 }
 export class changeBplanDto {
     @IsNotEmpty()
     bplan_id: String;
 
     content: [{
-        _id: String,
         heading: String,
-        body : String
+        body : Object
     }]
 }
 export class getBplanDto {
@@ -65,6 +74,6 @@ export class newTempDTo {
     
     content: [{
         heading: String,
-        body : String
+        body : Object
     }]
 }

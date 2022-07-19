@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { company, CompanyDoc } from 'src/models/company.model';
 import { member, memberDoc } from 'src/models/member.model';
-import {changeBplanDto, getBplanDto, loginDto, memberDto, newBlpanDto, newTempDTo, resetPassDto, updateBplanDto } from './dto';
+import {addSectionDto, changeBplanDto, getBplanDto, loginDto, memberDto, newBlpanDto, newTempDTo, resetPassDto, updateBplanDto } from './dto';
 import { template, templateDoc } from 'src/models/template.model';
 import { bplan, bplanDoc } from 'src/models/bplan.model';
 
@@ -32,12 +32,12 @@ export class BplanService {
     }
 
     async newBplan(dto: newBlpanDto,user,res) {
-        await this.bplanModel.findById(dto.t_id).exec()
+        await this.templateModel.findById(dto.t_id).exec()
         .then(async (template) => {
             const newBplan = new this.bplanModel({
                 t_id: template._id,
                 c_id: user.company_id,
-                ...template
+                content : template.content
             })
             await newBplan.save()
             .then(saved => {
@@ -84,6 +84,28 @@ export class BplanService {
             });
         })
     }
+    
+    async addsectionBplan(dto: addSectionDto, user, res) {
+        await this.templateModel.updateOne({ _id: dto.t_id},
+            {
+                $push: {
+                    content: {
+                        $each: [dto.content]
+                   }
+            }}
+        )
+        .then(async (temp) => {
+            res.status(200).json({
+                message: "The section of the Bplan is added",
+                temp 
+            })
+        })
+        .catch(err => {
+            res.status(500).json({
+              message: err,
+            });
+        })
+    }
 
     async changeBplan(dto: changeBplanDto, user, res) {
         await this.bplanModel.updateOne({ _id: dto.bplan_id},
@@ -91,7 +113,8 @@ export class BplanService {
         )
         .then(async (bplan) => {
             res.status(200).json({
-                message: "The Bplan order has been updated"
+                message: "The Bplan order has been updated",
+                bplan
             })
         })
         .catch(err => {
